@@ -59,6 +59,11 @@ Hi! My name is Ishaan Saravgi
            Networking
         </div>
     </a>
+    <a href="{{site.baseurl}}/sports/statistics" style="text-decoration: none;">
+        <div style="background-color: var(--teal); color: white; padding: 10px 20px; border-radius: 5px; font-weight: bold; transition: transform 0.2s, box-shadow 0.2s;">
+           Sports Statistics Tracker
+        </div>
+    </a>
 </div>
 
 <br>

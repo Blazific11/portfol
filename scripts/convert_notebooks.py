@@ -1100,7 +1100,7 @@ def process_notebook(notebook_file):
 
 def convert_notebooks():
     """Convert all notebooks in parallel while reporting progress."""
-    maxCores = os.cpu_count()  # get the number of cores available on the system
+    maxCores = min(os.cpu_count() or 1, 4)
 
     notebook_files = glob.glob(f"{notebook_directory}/**/*.ipynb", recursive=True)
 
@@ -1109,24 +1109,28 @@ def convert_notebooks():
         userInfo="Notebook conversion progress:", total=(len(notebook_files))
     )
 
-    with concurrent.futures.ProcessPoolExecutor(max_workers=maxCores) as executor:
-        futures = {
-            executor.submit(process_notebook, notebook_file): notebook_file
-            for notebook_file in notebook_files
-        }
+    try:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=maxCores) as executor:
+            futures = {
+                executor.submit(process_notebook, notebook_file): notebook_file
+                for notebook_file in notebook_files
+            }
 
-        for future in concurrent.futures.as_completed(futures):
-            notebook_file = futures[future]
-            try:
-                future.result()
-            except Exception as e:
-                print(
-                    f"Error occurred during notebook processing: {notebook_file}\n{traceback.format_exc()}"
-                )
-            finally:
-                rel_path = os.path.relpath(notebook_file, notebook_directory)
-                convertBar.set_suffix(rel_path)
-                convertBar.continue_progress()
+            for future in concurrent.futures.as_completed(futures):
+                notebook_file = futures[future]
+                try:
+                    future.result()
+                except Exception:
+                    print(
+                        f"Error occurred during notebook processing: {notebook_file}\n{traceback.format_exc()}"
+                    )
+                finally:
+                    rel_path = os.path.relpath(notebook_file, notebook_directory)
+                    convertBar.set_suffix(rel_path)
+                    convertBar.continue_progress()
+    except KeyboardInterrupt:
+        print("Notebook conversion cancelled.")
+        return
 
     convertBar.end_progress()
 
