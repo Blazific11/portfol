@@ -69,7 +69,7 @@ export class CodeExecutor {
 
     if (lang === 'javascript' && isLocalhost) {
       this.runJavaScriptFallback(code, startTime);
-    } else if (isLocalhost && (lang === 'python' || lang === 'java')) {
+    } else if (lang === 'python' || lang === 'java') {
       await this.runJudge0Fallback(code, lang, startTime);
     } else {
       outputDiv.textContent = 'Error: ' + lastError.message;
