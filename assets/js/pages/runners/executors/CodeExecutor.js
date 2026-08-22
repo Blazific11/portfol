@@ -25,35 +25,89 @@ export class CodeExecutor {
     const startTime = Date.now();
     const isLocalhost = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
 
-    let runURL;
-    if (lang === 'python') runURL = `${this.pythonURI}/run/python`;
-    else if (lang === 'java') runURL = `${this.javaURI}/run/java`;
-    else if (lang === 'javascript') runURL = `${this.pythonURI}/run/javascript`;
+    let localRunURL;
+    let hostedRunURL;
+    if (lang === 'python') {
+      localRunURL = `${this.pythonURI}/run/python`;
+      hostedRunURL = 'https://flask.opencodingsociety.com/run/python';
+    } else if (lang === 'java') {
+      localRunURL = `${this.javaURI}/run/java`;
+      hostedRunURL = 'https://spring.opencodingsociety.com/run/java';
+    } else if (lang === 'javascript') {
+      localRunURL = `${this.pythonURI}/run/javascript`;
+      hostedRunURL = 'https://flask.opencodingsociety.com/run/javascript';
+    }
     else throw new Error(`Unsupported language: ${lang}`);
 
     const body = JSON.stringify({ code });
     const options = { ...this.fetchOptions, method: 'POST', body };
+    const runURLs = isLocalhost ? [localRunURL, hostedRunURL] : [localRunURL];
+
+    let lastError;
+    for (const runURL of runURLs) {
+      try {
+        const res = await fetch(runURL, options);
+        if (!res.ok) {
+          throw new Error(`Runner returned ${res.status}`);
+        }
+        const result = await res.json();
+        const output = result.output || '[no output]';
+
+        if (lang === 'javascript' && output.includes("No such file or directory: 'node'")) {
+          throw new Error('Node.js not available on backend');
+        }
+
+        outputDiv.textContent = output;
+        if (execTimeSpan) {
+          execTimeSpan.textContent = `⏱Execution time: ${Date.now() - startTime}ms`;
+        }
+        return;
+      } catch (err) {
+        lastError = err;
+      }
+    }
+
+    if (lang === 'javascript' && isLocalhost) {
+      this.runJavaScriptFallback(code, startTime);
+    } else if (isLocalhost && (lang === 'python' || lang === 'java')) {
+      await this.runJudge0Fallback(code, lang, startTime);
+    } else {
+      outputDiv.textContent = 'Error: ' + lastError.message;
+      if (execTimeSpan) execTimeSpan.textContent = '';
+    }
+  }
+
+  async runJudge0Fallback(code, lang, startTime) {
+    const languageId = lang === 'python' ? 71 : 62;
+    const outputDiv = this.outputElement;
+    const execTimeSpan = this.execTimeElement;
 
     try {
-      const res = await fetch(runURL, options);
-      const result = await res.json();
-      const output = result.output || '[no output]';
+      const response = await fetch('https://ce.judge0.com/submissions?base64_encoded=false&wait=true', {
+        method: 'POST',
+        mode: 'cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          language_id: languageId,
+          source_code: code,
+        }),
+      });
 
-      if (lang === 'javascript' && isLocalhost && output.includes("No such file or directory: 'node'")) {
-        throw new Error('Node.js not available on backend');
+      if (!response.ok) {
+        throw new Error(`Fallback runner returned ${response.status}`);
       }
 
+      const result = await response.json();
+      const output = [result.stdout, result.stderr, result.compile_output, result.message]
+        .filter(Boolean)
+        .join('\n') || '[no output]';
       outputDiv.textContent = output;
       if (execTimeSpan) {
-        execTimeSpan.textContent = `⏱Execution time: ${Date.now() - startTime}ms`;
+        execTimeSpan.textContent = `⏱Execution time: ${Date.now() - startTime}ms (Judge0 fallback)`;
       }
-    } catch (err) {
-      if (lang === 'javascript' && isLocalhost) {
-        this.runJavaScriptFallback(code, startTime);
-      } else {
-        outputDiv.textContent = 'Error: ' + err.message;
-        if (execTimeSpan) execTimeSpan.textContent = '';
-      }
+    } catch (error) {
+      outputDiv.textContent = 'Error: ' + error.message;
+      if (execTimeSpan) execTimeSpan.textContent = '';
     }
   }
 

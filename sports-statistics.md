@@ -1,5 +1,6 @@
 ---
 layout: post
+codemirror: true
 title: Sports Statistics Tracker
 description: Track player statistics and practice AP CSP Create Performance Task concepts.
 permalink: /sports/statistics/
