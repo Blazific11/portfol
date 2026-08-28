@@ -60,7 +60,7 @@ Flags are made using Wikipedia images
     // 2. Define a JavaScript object for our http source and our data rows for the Living in the World grid
     var http_source = "https://upload.wikimedia.org/wikipedia/commons/";
     var living_in_the_world = [
-        {"flag": "2/2e/Flag_of_India.svg", "greeting": "Namaste", "description": "India - my home"},
+        {"flag": "4/41/Flag_of_India.svg", "greeting": "Namaste", "description": "India - my home"},
         {"flag": "a/a4/Flag_of_the_United_States.svg", "greeting": "Hey", "description": "America - my other flag"},
         {"flag": "c/c3/Flag_of_France.svg", "greeting": "Bonjour", "description": "Paris"},
         {"flag": "b/be/Flag_of_England.svg", "greeting": "Alright mate", "description": "England"},
