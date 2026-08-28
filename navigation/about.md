@@ -119,4 +119,6 @@ Everything for me revolves around the things I enjoy, especially sports and spen
 Gallery of Pics, scroll to the right for more ...
 </comment>
 <div class="image-gallery">
+  <img src="{{site.baseurl}}/images/about/ishaan1.jpeg" alt="Ishaan photo 1">
+  <img src="{{site.baseurl}}/images/about/ishaan2.jpeg" alt="Ishaan photo 2">
 </div>
