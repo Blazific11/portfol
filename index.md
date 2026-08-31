@@ -5,7 +5,7 @@ hide: true
 show_reading_time: false
 ---
 
-Hi! My name is Ishaan Saravgi
+Hi! My name is [Your Full Name]
 
 ### Development Environment
 
@@ -57,11 +57,6 @@ Hi! My name is Ishaan Saravgi
     <a href="{{site.baseurl}}/network/stack" style="text-decoration: none;">
         <div style="background-color: var(--orange); color: white; padding: 10px 20px; border-radius: 5px; font-weight: bold; transition: transform 0.2s, box-shadow 0.2s;">
            Networking
-        </div>
-    </a>
-    <a href="{{site.baseurl}}/sports/statistics" style="text-decoration: none;">
-        <div style="background-color: var(--teal); color: white; padding: 10px 20px; border-radius: 5px; font-weight: bold; transition: transform 0.2s, box-shadow 0.2s;">
-           Sports Statistics Tracker
         </div>
     </a>
 </div>
