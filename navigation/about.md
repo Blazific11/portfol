@@ -60,10 +60,10 @@ Flags are made using Wikipedia images
     // 2. Define a JavaScript object for our http source and our data rows for the Living in the World grid
     var http_source = "";
     var living_in_the_world = [
-        {"flag": "🇮🇳", "greeting": "Namaste", "description": "India - my home"},
-        {"flag": "🇺🇸", "greeting": "Hey", "description": "America - my other flag"},
-        {"flag": "🇫🇷", "greeting": "Bonjour", "description": "Paris"},
-        {"flag": "🏴", "greeting": "Alright mate", "description": "England"},
+        {"flag": "2/2e/Flag_of_India.svg", "greeting": "Namaste", "description": "India - my home"},
+        {"flag": "a/a4/Flag_of_the_United_States.svg", "greeting": "Hey", "description": "America - my other flag"},
+        {"flag": "c/c3/Flag_of_France.svg", "greeting": "Bonjour", "description": "Paris"},
+        {"flag": "b/be/Flag_of_England.svg", "greeting": "Alright mate", "description": "England"},
     ];
 
     // 3a. Consider how to update style count for size of container
@@ -74,16 +74,15 @@ Flags are made using Wikipedia images
         // Create a "div" with "class grid-item" for each row
         var gridItem = document.createElement("div");
         gridItem.className = "grid-item";  // This class name connects the gridItem to the CSS style elements
-        // Render the flag directly so the page works without external image files
-        var img = document.createElement("div");
-        img.textContent = location.flag;
-        img.setAttribute("role", "img");
-        img.setAttribute("aria-label", location.description + " flag");
-        img.style.fontSize = "64px";
-        img.style.height = "100px";
-        img.style.display = "flex";
-        img.style.alignItems = "center";
-        img.style.justifyContent = "center";
+        // Load the flag from Wikimedia Commons (Wikipedia's media repository)
+        var img = document.createElement("img");
+        img.src = "https://upload.wikimedia.org/wikipedia/commons/" + location.flag;
+        img.alt = location.description + " flag";
+        img.style.width = "120px";
+        img.style.height = "80px";
+        img.style.objectFit = "contain";
+        img.style.display = "block";
+        img.style.margin = "0 auto";
 
         // Add "p" HTML tag for the description
         var description = document.createElement("p");
